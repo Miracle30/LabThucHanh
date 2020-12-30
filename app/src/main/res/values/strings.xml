@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Lab3</string>
+    <string name="name">Name</string>
+    <string name="address">Address</string>
+    <string name="type">Type</string>
+    <string name="take_out">Take out</string>
+    <string name="sit_down">Sit Down</string>
+    <string name="delivery">Delivery</string>
+
+</resources>

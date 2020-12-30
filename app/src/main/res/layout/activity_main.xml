@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost
+    android:id="@android:id/tabhost"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".MainActivity">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ListView
+                android:id="@+id/lvRes"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/details"
+                android:layout_alignParentTop="true"/>
+
+            <TableLayout
+                android:id="@+id/details"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                tools:context=".MainActivity">
+
+               <TableRow
+                   android:id="@+id/tableRow1"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_margin="10dp">
+                   <TextView
+                       android:layout_height="wrap_content"
+                       android:layout_width="wrap_content"
+                       android:text="@string/name"
+                       android:textSize="20sp"/>
+                   <EditText
+                       android:id="@+id/edtName"
+                       android:layout_marginLeft="10dp"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"/>
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp">
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/address"
+                        android:textSize="20sp"/>
+                    <EditText
+                        android:id="@+id/edtAdd"
+                        android:layout_marginLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp">
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/type"
+                        android:textSize="20sp"/>
+                    <RadioGroup
+                        android:id="@+id/rgType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        >
+                        <RadioButton
+                            android:id="@+id/rdbTakeOut"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/take_out" />
+
+                        <RadioButton
+                            android:id="@+id/rdbSitDown"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/sit_down"/>
+
+                        <RadioButton
+                            android:id="@+id/rdbDelivery"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/delivery"/>
+
+
+                    </RadioGroup>
+
+                </TableRow>
+
+                <Button
+                    android:id="@+id/btnSave"
+                    android:layout_margin="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint ="@color/christmasVang"
+                    android:textColor="@color/black"
+                    android:text="Save"/>
+
+            </TableLayout>
+        </FrameLayout>
+    </LinearLayout>
+</TabHost>
