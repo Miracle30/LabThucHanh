@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.database.Cursor;
+import android.widget.CursorAdapter;
 import android.widget.TabHost;
 import android.app.TabActivity;
 import android.content.Context;
@@ -28,33 +30,43 @@ import java.util.List;
 import android.widget.AdapterView;
 
 import a1711062183.Restaurant.Restaurant;
-
+import a1711062183.Restaurant.RestaurantHelper;
 
 
 public class MainActivity extends TabActivity{
 
 //    private Restaurant r = new Restaurant();
-    private List<Restaurant> resList = new ArrayList<Restaurant>();
+    List<Restaurant> resList = new ArrayList<Restaurant>();
 //    private ArrayAdapter<Restaurant> adapter = null;
     RestaurantAdapter adapter = null;
+    //khai bao bien thanh vien lien quan den truy cap du lieu
+    RestaurantHelper helper = null;
+    //khai bao danh sach res dung Cursor
+    Cursor cR = null;
+
+    Button btnSave;
+    EditText edtName, edtAdd;
+    RadioGroup rgType;
+    ListView lvRes;
 
     private AdapterView.OnItemClickListener onListClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Restaurant r = resList.get(position);
+//            Restaurant r = resList.get(position);
+            cR.moveToPosition(position);
             edtName = findViewById(R.id.edtName);
             edtAdd = findViewById(R.id.edtAdd);
             rgType = findViewById(R.id.rgType);
 
-            edtName.setText(r.getName());
-            edtAdd.setText(r.getAddress());
-            if(r.getType().equals(("Sit down"))){
+            edtName.setText(helper.getName(cR));
+            edtAdd.setText(helper.getAddress(cR));
+            if(helper.getType(cR).equals(("Sit down"))){
                 rgType.check(R.id.rdbSitDown);
             }
-            else if(r.getType().equals(("Take out"))){
+            else if(helper.getType(cR).equals(("Take out"))){
                 rgType.check(R.id.rdbTakeOut);
             }
-            else if(r.getType().equals(("Delivery"))){
+            else if(helper.getType(cR).equals(("Delivery"))){
                 rgType.check(R.id.rdbDelivery);
             }
 
@@ -63,50 +75,80 @@ public class MainActivity extends TabActivity{
         }
     };
 
-    Button btnSave;
-    EditText edtName, edtAdd;
-    RadioGroup rgType;
-    ListView lvRes;
 
-    public class RestaurantAdapter extends ArrayAdapter<Restaurant> {
-        public RestaurantAdapter(@NonNull Context context, int resource) {
-            super(context, resource);
-        }
-        public RestaurantAdapter(){
-            super(MainActivity.this, android.R.layout.simple_list_item_1, resList);
+//    public class RestaurantAdapter extends ArrayAdapter<Restaurant> {
+//        public RestaurantAdapter(@NonNull Context context, int resource) {
+//            super(context, resource);
+//        }
+//        public RestaurantAdapter(){
+//            super(MainActivity.this, android.R.layout.simple_list_item_1, resList);
+//        }
+//
+//        @NonNull
+//        @Override
+//        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+//            View row = convertView;
+//            if(row == null){
+//                LayoutInflater inflater = getLayoutInflater();
+//                row = inflater.inflate(R.layout.row, null);
+//
+//            }
+//            Restaurant r = resList.get(position);
+//            ImageView icon = row.findViewById(R.id.icon);
+//
+//            ((TextView)row.findViewById(R.id.title)).setText(r.getName());
+//            ((TextView)row.findViewById(R.id.address)).setText(r.getAddress());
+//
+//            String type = r.getType();
+//            if (type.equals("Take out")){
+//                icon.setImageResource(R.drawable.takeout);
+//            }
+//            else if (type.equals("Sit down")){
+//                icon.setImageResource(R.drawable.sitdown);
+//            }
+//            else if (type.equals("Delivery")){
+//                icon.setImageResource(R.drawable.delivery);
+//            }
+//
+//            return row;
+//        }
+//    }
+    //lab8
+    class RestaurantAdapter extends CursorAdapter {
+        public RestaurantAdapter(Cursor c) {
+            super(MainActivity.this, c);
         }
 
-        @NonNull
+        public RestaurantAdapter(Context context, Cursor c) {
+            super(context, c);
+
+        }
+
         @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View row = convertView;
-            if(row == null){
-                LayoutInflater inflater = getLayoutInflater();
-                row = inflater.inflate(R.layout.row, null);
+        public void bindView(View view, Context context, Cursor cursor) {
 
-            }
-            Restaurant r = resList.get(position);
-            ImageView icon = row.findViewById(R.id.icon);
-
-            ((TextView)row.findViewById(R.id.title)).setText(r.getName());
-            ((TextView)row.findViewById(R.id.address)).setText(r.getAddress());
-
-            String type = r.getType();
-            if (type.equals("Take out")){
+            View row = view;
+            ((TextView) row.findViewById(R.id.title)).
+                    setText(helper.getName(cursor));
+            ((TextView) row.findViewById(R.id.address)).
+                    setText(helper.getAddress(cursor));
+            ImageView icon = (ImageView) row.findViewById(R.id.icon);
+            String type = helper.getType(cursor);
+            if (type.equals("Take out"))
                 icon.setImageResource(R.drawable.takeout);
-            }
-            else if (type.equals("Sit down")){
+            else if (type.equals("Sit down"))
                 icon.setImageResource(R.drawable.sitdown);
-            }
-            else if (type.equals("Delivery")){
+            else
                 icon.setImageResource(R.drawable.delivery);
-            }
+        }// end bindView
 
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            LayoutInflater inflater = getLayoutInflater();
+            View row = inflater.inflate(R.layout.row, parent, false);
             return row;
         }
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,11 +161,17 @@ public class MainActivity extends TabActivity{
         //lab7
         lvRes.setOnItemClickListener(onListClick);
 
+        //lab8
+        helper = new RestaurantHelper(this);
+        //lay csdl
+        cR = helper.getAll();
+        startManagingCursor(cR);
 //        adapter = new ArrayAdapter<Restaurant>(this, android.R.layout.simple_list_item_1, resList);
-        adapter = new RestaurantAdapter();
+        adapter = new RestaurantAdapter(cR);
         lvRes.setAdapter(adapter);
 
-        //thêm cho tab host
+
+        //thêm cho tab host -> lab7
         TabHost.TabSpec spec = getTabHost().newTabSpec("tag1");
         spec.setContent(R.id.lvRes);
         spec.setIndicator("List", getResources().getDrawable(R.drawable.ic_baseline_list_24));
@@ -136,6 +184,15 @@ public class MainActivity extends TabActivity{
 
         getTabHost().setCurrentTab(0);
 
+
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        helper.close();
     }
 
     private View.OnClickListener onSave = new View.OnClickListener() {
@@ -160,6 +217,8 @@ public class MainActivity extends TabActivity{
                 case R.id.rdbDelivery:
                     r.setType("Delivery");
                     break;
+                default:
+                    break;
             }
 //                    Log.d(r.getName(), "Tên");
 //                    Log.d(r.getAddress(), "Địa chỉ");
@@ -167,7 +226,13 @@ public class MainActivity extends TabActivity{
 //            Toast.makeText(getApplicationContext(),r.getName()+" "+ r.getAddress()+" "+ r.getType() ,
 //                    Toast.LENGTH_LONG).show();
 
-            resList.add(r);
+            //them csdl
+            helper.insert(r.getName(), r.getAddress(), r.getType());
+
+            //refresh lai du lieu
+            cR.requery();
+
+//            resList.add(r);
             edtName.getText().clear();
             edtAdd.getText().clear();
             rgType.clearCheck();
